@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Lagos, Algarve Weather</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: transparent; /* If you want a transparent background */
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+    #weather-widget {
+      display: inline-block;
+      margin: 20px;
+      padding: 20px;
+      background: rgba(255,255,255,0.8); /* Slight white overlay, remove if not wanted */
+      border-radius: 10px;
+    }
+    #weather-title {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    #weather-temp {
+      font-size: 36px;
+      margin: 10px 0;
+    }
+    #weather-desc {
+      font-size: 18px;
+      text-transform: capitalize; /* Make weather description capitalized */
+    }
+    #weather-icon {
+      width: 80px;
+      height: 80px;
+    }
+  </style>
+</head>
+<body>
+  <div id="weather-widget">
+    <div id="weather-title">Weather in Lagos, Algarve</div>
+    <img id="weather-icon" alt="Weather icon" />
+    <div id="weather-temp"></div>
+    <div id="weather-desc"></div>
+  </div>
+
+  <script>
+    // Replace with your own API key from OpenWeatherMap
+    const API_KEY = "a465f4809ba484aee7ea8b0c5dca83ba";
+    // City name, plus optional country code for specificity
+    const CITY = "Lagos";
+    const COUNTRY_CODE = "PT";
+    
+    // Fetch weather data from OpenWeatherMap
+    async function fetchWeather() {
+      try {
+        const url = `https://api.openweathermap.org/data/2.5/weather?q=${CITY},${COUNTRY_CODE}&appid=${API_KEY}&units=metric`;
+        const response = await fetch(url);
+        
+        if (!response.ok) {
+          throw new Error("Error fetching weather data");
+        }
+        
+        const data = await response.json();
+        
+        // Extract main info
+        const temp = data.main.temp;           // Temperature in °C
+        const description = data.weather[0].description; // e.g. "clear sky"
+        const iconCode = data.weather[0].icon; // e.g. "01d"
+        
+        // Build the icon URL - openweathermap provides a set of icons
+        const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
+        
+        // Update the DOM elements
+        document.getElementById("weather-icon").src = iconUrl;
+        document.getElementById("weather-icon").alt = description;
+        
+        document.getElementById("weather-temp").textContent = `${temp.toFixed(1)}°C`;
+        document.getElementById("weather-desc").textContent = description;
+        
+      } catch (err) {
+        console.error(err);
+        document.getElementById("weather-widget").textContent =
+          "Unable to load weather data. Please try again later.";
+      }
+    }
+    
+    // Call function immediately on load
+    fetchWeather();
+  </script>
+</body>
+</html>
